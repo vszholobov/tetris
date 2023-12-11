@@ -8,17 +8,63 @@ import (
 type PieceType int
 
 const (
-	TShape = 0
-	ZigZag = 1
-	LShape = 2
+	TShape      = 0
+	ZigZagLeft  = 1
+	ZigZagRight = 2
+	LShape      = 3
+	IShape      = 4
 )
 
 var rotationsCntByType = map[PieceType]int{
-	TShape: 4,
-	ZigZag: 2,
-	LShape: 2,
+	TShape:      4,
+	ZigZagLeft:  2,
+	ZigZagRight: 2,
+	LShape:      4,
+	IShape:      2,
 }
 
+// L
+//000010000000
+//000011100000 = 524512
+
+//000001000000
+//000001000000
+//000011000000 = 1074004160
+
+//000011100000
+//000000100000 = 917536
+
+//000011000000
+//000010000000
+//000010000000 = 3221749888
+
+// ----
+//000011110000 = 240
+
+//000001000000
+//000001000000
+//000001000000
+//000001000000 = 4399120515136
+
+//  --
+// --
+//000000110000
+//000001100000 = 196704
+
+//000001000000
+//000001100000
+//000000100000 = 1074135072
+
+// --
+//  --
+//000001100000
+//000000110000 = 393264
+
+//000000100000
+//000001100000
+//000001000000 = 537264192
+
+// T
 //000001110000
 //000000100000 = 458784
 
@@ -35,7 +81,11 @@ var rotationsCntByType = map[PieceType]int{
 //000000100000 = 537067552
 
 var rotationsByType = map[PieceType][]*big.Int{
-	TShape: {big.NewInt(458784), big.NewInt(537264160), big.NewInt(537329664), big.NewInt(537067552)},
+	TShape:      {big.NewInt(458784), big.NewInt(537264160), big.NewInt(537329664), big.NewInt(537067552)},
+	ZigZagLeft:  {big.NewInt(196704), big.NewInt(1074135072)},
+	ZigZagRight: {big.NewInt(393264), big.NewInt(537264192)},
+	IShape:      {big.NewInt(240), big.NewInt(4399120515136)},
+	LShape:      {big.NewInt(524512), big.NewInt(1074004160), big.NewInt(917536), big.NewInt(3221749888)},
 }
 
 type RotationType int
@@ -131,13 +181,13 @@ func (piece *Piece) moveRight() bool {
 
 func (piece *Piece) moveDown() bool {
 	newPieceVal := big.NewInt(0).Set(piece.GetVal())
-	newPieceVal.Lsh(newPieceVal, fieldWidth)
+	newPieceVal.Lsh(newPieceVal, FieldWidth)
 	if piece.field.intersects(newPieceVal) {
 		return false
 	}
 	for i, _ := range piece.rotations {
 		newRotation := big.NewInt(0).Set(piece.rotations[i])
-		piece.rotations[i] = newRotation.Lsh(newRotation, fieldWidth)
+		piece.rotations[i] = newRotation.Lsh(newRotation, FieldWidth)
 	}
 	return true
 }

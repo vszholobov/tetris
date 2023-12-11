@@ -8,45 +8,14 @@ import (
 	"time"
 )
 
-const fieldWidth = 12
-
-type Field struct {
-	val          *big.Int
-	currentPiece *Piece
-}
-
 func main() {
-	fieldVal, _ := big.NewInt(0).SetString(
-		"111111111111"+
-			"100000000001"+
-			"100000000001"+
-			"100000000001"+
-			"100000000001"+
-			"100000000001"+
-			"100000000001"+
-			"100000000001"+
-			"100000000001"+
-			"100000000001"+
-			"100000000001"+
-			"100000000001"+
-			"100000000001"+
-			"100000000001"+
-			"100000000001"+
-			"100000000001"+
-			"100000000001"+
-			"100000000001"+
-			"100000000001"+
-			"100000000001"+
-			"100000000001", 2)
-	fmt.Println(fieldVal)
-
+	extField := MakeField()
 	var wg sync.WaitGroup
-	extField := Field{val: fieldVal}
 	wg.Add(1)
 	go func(field *Field) {
 		piece := SelectNextPiece(field)
 		for {
-			field.printField(piece)
+			printField(field)
 			moveType := rand.Intn(4)
 			switch moveType {
 			case 0:
@@ -68,12 +37,8 @@ func main() {
 	wg.Wait()
 }
 
-func (field Field) printField(piece Piece) {
-	newField := big.NewInt(0).Set(field.val)
-	newShape := big.NewInt(0).Set(piece.GetVal())
-	newField.Or(newField, newShape)
-	s := fmt.Sprintf("%b", newField)
-	// TODO: one PrintLn to reduce output calls
+func printField(field *Field) {
+	s := field.String()
 	for i := 20; i >= 0; i-- {
 		fmt.Println(s[i*12 : i*12+12])
 	}
@@ -87,7 +52,20 @@ func (field Field) intersects(pieceVal *big.Int) bool {
 }
 
 func SelectNextPiece(field *Field) Piece {
-	piece := MakePiece(field, TShape)
+	pieceTypeRnd := rand.Intn(5)
+	var pieceType PieceType
+	if pieceTypeRnd == 0 {
+		pieceType = TShape
+	} else if pieceTypeRnd == 1 {
+		pieceType = ZigZagLeft
+	} else if pieceTypeRnd == 2 {
+		pieceType = ZigZagRight
+	} else if pieceTypeRnd == 3 {
+		pieceType = IShape
+	} else if pieceTypeRnd == 4 {
+		pieceType = LShape
+	}
+	piece := MakePiece(field, pieceType)
 	field.currentPiece = &piece
 	return piece
 }
