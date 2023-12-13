@@ -1,4 +1,4 @@
-package main
+package field
 
 import (
 	"math"
@@ -131,7 +131,7 @@ func (piece *Piece) Rotate(rotationType RotationType) bool {
 	}
 
 	piece.changeRotationCount(diff)
-	if !piece.field.intersects(piece.GetVal()) {
+	if !piece.field.Intersects(piece.GetVal()) {
 		return true
 	}
 	piece.changeRotationCount(-diff)
@@ -153,39 +153,39 @@ func (piece *Piece) GetVal() *big.Int {
 	return piece.rotations[abs]
 }
 
-func (piece *Piece) moveLeft() bool {
+func (piece *Piece) MoveLeft() bool {
 	newPieceVal := big.NewInt(0).Set(piece.GetVal())
 	newPieceVal.Rsh(newPieceVal, 1)
-	if piece.field.intersects(newPieceVal) {
+	if piece.field.Intersects(newPieceVal) {
 		return false
 	}
-	for i, _ := range piece.rotations {
+	for i := range piece.rotations {
 		newRotation := big.NewInt(0).Set(piece.rotations[i])
 		piece.rotations[i] = newRotation.Rsh(newRotation, 1)
 	}
 	return true
 }
 
-func (piece *Piece) moveRight() bool {
+func (piece *Piece) MoveRight() bool {
 	newPieceVal := big.NewInt(0).Set(piece.GetVal())
 	newPieceVal.Lsh(newPieceVal, 1)
-	if piece.field.intersects(newPieceVal) {
+	if piece.field.Intersects(newPieceVal) {
 		return false
 	}
-	for i, _ := range piece.rotations {
+	for i := range piece.rotations {
 		newRotation := big.NewInt(0).Set(piece.rotations[i])
 		piece.rotations[i] = newRotation.Lsh(newRotation, 1)
 	}
 	return true
 }
 
-func (piece *Piece) moveDown() bool {
+func (piece *Piece) MoveDown() bool {
 	newPieceVal := big.NewInt(0).Set(piece.GetVal())
 	newPieceVal.Lsh(newPieceVal, FieldWidth)
-	if piece.field.intersects(newPieceVal) {
+	if piece.field.Intersects(newPieceVal) {
 		return false
 	}
-	for i, _ := range piece.rotations {
+	for i := range piece.rotations {
 		newRotation := big.NewInt(0).Set(piece.rotations[i])
 		piece.rotations[i] = newRotation.Lsh(newRotation, FieldWidth)
 	}
@@ -193,8 +193,8 @@ func (piece *Piece) moveDown() bool {
 }
 
 //func (piece Piece) dropPiece(field Field) Piece {
-//	for !piece.moveDown().intersects() {
-//		piece = piece.moveDown()
+//	for !piece.MoveDown().intersects() {
+//		piece = piece.MoveDown()
 //	}
 //	return piece
 //}
