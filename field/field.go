@@ -6,6 +6,7 @@ import (
 )
 
 const FieldWidth = 12
+const FieldHeight = 21
 
 type Field struct {
 	Val          *big.Int
@@ -45,68 +46,29 @@ func (gameField *Field) String() string {
 	return fmt.Sprintf("%b", newField)
 }
 
-// ! Нельзя доходить до последней линии. Она всегда заполнена
-
-// fullLine  := 111...111
-// emptyLine := 100...001
-// range := fieldWidth * i
-// line := ((fullLine << range) & field) >> range
-// line is filled -> (fullLine << range) == (fullLine << range) & field
-
-//restField := 0
-// if line is filled then
-//    restField := (restField << fieldWidth) | emptyLine
-//    score += ...
-// else
-//    restField := (line << range) | restField
-
-// field = (field >> range << range) | restField
-
-// example
-// field = 11111
-// field >> 3 = 11
-// field << 3 = 11000
-
-// var fullLine = big.NewInt(111111111111)
 func (gameField *Field) Clean() {
 	restField := big.NewInt(0)
 
 	fullLine, _ := big.NewInt(0).SetString("111111111111", 2)
 	emptyLine, _ := big.NewInt(0).SetString("100000000001", 2)
-	for i := 0; i < 21; i++ {
+	for i := 0; i < FieldHeight; i++ {
 		curRange := uint(i * FieldWidth)
 		lineMask := big.NewInt(0).Lsh(fullLine, curRange)
-		//lineMask.And(lineMask, gameField.Val)
 		lineIsFilled := big.NewInt(0).And(lineMask, gameField.Val).Cmp(lineMask) == 0
 
 		if lineIsFilled {
-			// добавляем пустую линию в конец поля
+			// add empy line to end of field
 			restField.Lsh(restField, FieldWidth)
 			restField.Or(restField, emptyLine)
 			// TODO: score += награда за соженную линию
 		} else {
+			// add current line to start of field
 			lineMask.And(lineMask, gameField.Val)
 			restField.Or(lineMask, restField)
-
-			// Expr!
-			//restField.Rsh(restField, FieldWidth)
 		}
-
-		// field = (field >> range << range) | restField
-		// Обнуляем остаток поля и проставляем туда restField
-		gameField.Val.Rsh(gameField.Val, curRange)
-		gameField.Val.Lsh(gameField.Val, curRange)
-		gameField.Val.Or(gameField.Val, restField)
-
-		//gameField.Val.Rsh(gameField.Val, curRange+FieldWidth)
-		//gameField.Val.Lsh(gameField.Val, curRange+FieldWidth)
-		//gameField.Val.Or(gameField.Val, restField)
-		//fmt.Println(gameField.Val)
 	}
-
-	//gameField.Val.Rsh(gameField.Val, FieldWidth)
-
-	// 22 строки. Больше на одну строку, чем надо, поэтому сдвигаем вправо на длину поля в конце
+	// 22 lines. One redundant line for correct or concatenation.
+	// So shift to the right by the length of the field after concatenation to remove redundant empty line
 	gameField.Val.SetString(
 		"111111111111"+
 			"000000000000"+
