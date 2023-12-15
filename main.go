@@ -11,6 +11,7 @@ import (
 )
 
 func main() {
+	field.InitClear()
 	fieldVal, _ := big.NewInt(0).SetString(
 		"111111111111"+
 			"100000000001"+

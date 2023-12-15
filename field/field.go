@@ -88,6 +88,7 @@ func CopyBigInt(val *big.Int) *big.Int {
 }
 
 func PrintField(field *Field) {
+	CallClear()
 	s := field.String()
 	for i := 20; i >= 0; i-- {
 		fmt.Println(s[i*12 : i*12+12])
