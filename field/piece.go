@@ -8,11 +8,11 @@ import (
 type PieceType int
 
 const (
-	TShape      = 0
-	ZigZagLeft  = 1
-	ZigZagRight = 2
-	LShape      = 3
-	IShape      = 4
+	TShape      PieceType = 0
+	ZigZagLeft  PieceType = 1
+	ZigZagRight PieceType = 2
+	LShape      PieceType = 3
+	IShape      PieceType = 4
 )
 
 var rotationsCntByType = map[PieceType]int{
@@ -81,7 +81,7 @@ var rotationsCntByType = map[PieceType]int{
 //000000100000 = 537067552
 
 var rotationsByType = map[PieceType][]*big.Int{
-	TShape:      {big.NewInt(458784), big.NewInt(537264160), big.NewInt(537329664), big.NewInt(537067552)},
+	TShape:      {big.NewInt(458784), big.NewInt(537067552), big.NewInt(537329664), big.NewInt(537264160)},
 	ZigZagLeft:  {big.NewInt(196704), big.NewInt(1074135072)},
 	ZigZagRight: {big.NewInt(393264), big.NewInt(537264192)},
 	IShape:      {big.NewInt(240), big.NewInt(4399120515136)},
@@ -191,10 +191,3 @@ func (piece *Piece) MoveDown() bool {
 	}
 	return true
 }
-
-//func (piece Piece) dropPiece(field Field) Piece {
-//	for !piece.MoveDown().intersects() {
-//		piece = piece.MoveDown()
-//	}
-//	return piece
-//}

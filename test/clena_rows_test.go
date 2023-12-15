@@ -52,9 +52,9 @@ func TestCleanOneRow(t *testing.T) {
 			"100000000001"+
 			"100000000001"+
 			"100000000001", 2)
-	f := field.Field{Val: fieldVal, CurrentPiece: nil}
-	f.Clean()
-	assert.Equal(t, fieldValAfterClean, f.Val)
+	gameField := field.MakeField(fieldVal)
+	gameField.Clean()
+	assert.Equal(t, fieldValAfterClean, gameField.Val)
 }
 
 func TestCleanTwoRows(t *testing.T) {
@@ -102,7 +102,7 @@ func TestCleanTwoRows(t *testing.T) {
 			"100000000001"+
 			"100000000001"+
 			"100000000001", 2)
-	f := field.Field{Val: fieldVal, CurrentPiece: nil}
+	f := field.MakeField(fieldVal)
 	f.Clean()
 	assert.Equal(t, fieldValAfterClean, f.Val)
 }
@@ -152,7 +152,7 @@ func TestCleanThreeRows(t *testing.T) {
 			"100000000001"+
 			"100000000001"+
 			"100000000001", 2)
-	f := field.Field{Val: fieldVal, CurrentPiece: nil}
+	f := field.MakeField(fieldVal)
 	f.Clean()
 	assert.Equal(t, fieldValAfterClean, f.Val)
 }
@@ -202,7 +202,7 @@ func TestCleanFourRows(t *testing.T) {
 			"100000000001"+
 			"100000000001"+
 			"100000000001", 2)
-	f := field.Field{Val: fieldVal, CurrentPiece: nil}
+	f := field.MakeField(fieldVal)
 	f.Clean()
 	assert.Equal(t, fieldValAfterClean, f.Val)
 }
@@ -253,7 +253,7 @@ func TestCleanTwoRows_Separated(t *testing.T) {
 			"100000000001"+
 			"100000000001"+
 			"100000000001", 2)
-	f := field.Field{Val: fieldVal, CurrentPiece: nil}
+	f := field.MakeField(fieldVal)
 	f.Clean()
 	assert.Equal(t, fieldValAfterClean, f.Val)
 }
@@ -304,7 +304,7 @@ func TestCleanThreeRows_Separated(t *testing.T) {
 			"100000000001"+
 			"100000000001"+
 			"100000000001", 2)
-	f := field.Field{Val: fieldVal, CurrentPiece: nil}
+	f := field.MakeField(fieldVal)
 	f.Clean()
 	assert.Equal(t, fieldValAfterClean, f.Val)
 }
@@ -355,7 +355,7 @@ func TestCleanFourRows_Separated(t *testing.T) {
 			"100000000001"+
 			"100000000001"+
 			"100000000001", 2)
-	f := field.Field{Val: fieldVal, CurrentPiece: nil}
+	f := field.MakeField(fieldVal)
 	f.Clean()
 	assert.Equal(t, fieldValAfterClean, f.Val)
 }
@@ -405,7 +405,7 @@ func TestCleanFourRows_Separated_Even(t *testing.T) {
 			"100000000001"+
 			"100000000001"+
 			"100000000001", 2)
-	f := field.Field{Val: fieldVal, CurrentPiece: nil}
+	f := field.MakeField(fieldVal)
 	f.Clean()
 	assert.Equal(t, fieldValAfterClean, f.Val)
 }
@@ -455,7 +455,7 @@ func TestCleanThreeRows_Separated_TwoAndOne(t *testing.T) {
 			"100000000001"+
 			"100000000001"+
 			"100000000001", 2)
-	f := field.Field{Val: fieldVal, CurrentPiece: nil}
+	f := field.MakeField(fieldVal)
 	f.Clean()
 	assert.Equal(t, fieldValAfterClean, f.Val)
 }
@@ -505,7 +505,7 @@ func TestCleanFourRows_Separated_TwoAndTwo(t *testing.T) {
 			"100000000001"+
 			"100000000001"+
 			"100000000001", 2)
-	f := field.Field{Val: fieldVal, CurrentPiece: nil}
+	f := field.MakeField(fieldVal)
 	f.Clean()
 	assert.Equal(t, fieldValAfterClean, f.Val)
 }
@@ -555,7 +555,7 @@ func TestCleanRowNearEnd(t *testing.T) {
 			"110000000001"+
 			"110000000001"+
 			"100000000001", 2)
-	f := field.Field{Val: fieldVal, CurrentPiece: nil}
+	f := field.MakeField(fieldVal)
 	f.Clean()
 	assert.Equal(t, fieldValAfterClean, f.Val)
 }
@@ -605,7 +605,7 @@ func TestCleanTwoSeparatedRowsNearEnd(t *testing.T) {
 			"110000000001"+
 			"100000000001"+
 			"100000000001", 2)
-	f := field.Field{Val: fieldVal, CurrentPiece: nil}
+	f := field.MakeField(fieldVal)
 	f.Clean()
 	assert.Equal(t, fieldValAfterClean, f.Val)
 }
@@ -655,7 +655,7 @@ func TestCleanThreeSeparatedRowsNearEnd_TwoAndOne(t *testing.T) {
 			"100000000001"+
 			"100000000001"+
 			"100000000001", 2)
-	f := field.Field{Val: fieldVal, CurrentPiece: nil}
+	f := field.MakeField(fieldVal)
 	f.Clean()
 	assert.Equal(t, fieldValAfterClean, f.Val)
 }
@@ -705,7 +705,7 @@ func TestCleanTwoSeparatedRowsOneTopOneBottom(t *testing.T) {
 			"110000000001"+
 			"100000000001"+
 			"100000000001", 2)
-	f := field.Field{Val: fieldVal, CurrentPiece: nil}
+	f := field.MakeField(fieldVal)
 	f.Clean()
 	assert.Equal(t, fieldValAfterClean, f.Val)
 }

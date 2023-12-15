@@ -11,32 +11,14 @@ const FieldHeight = 21
 type Field struct {
 	Val          *big.Int
 	CurrentPiece *Piece
+	Score        *int
+	CleanCount   *int
 }
 
-func MakeField() Field {
-	fieldVal, _ := big.NewInt(0).SetString(
-		"111111111111"+
-			"100000000001"+
-			"100000000001"+
-			"100000000001"+
-			"100000000001"+
-			"100000000001"+
-			"100000000001"+
-			"100000000001"+
-			"100000000001"+
-			"100000000001"+
-			"100000000001"+
-			"100000000001"+
-			"100000000001"+
-			"100000000001"+
-			"100000000001"+
-			"100000000001"+
-			"100000000001"+
-			"100000000001"+
-			"100000000001"+
-			"100000000001"+
-			"100000000001", 2)
-	return Field{Val: fieldVal}
+func MakeField(fieldVal *big.Int) Field {
+	score := 0
+	speed := 10
+	return Field{Val: fieldVal, Score: &score, CleanCount: &speed}
 }
 
 func (gameField *Field) String() string {
@@ -51,7 +33,7 @@ func (gameField *Field) Clean() {
 
 	fullLine, _ := big.NewInt(0).SetString("111111111111", 2)
 	emptyLine, _ := big.NewInt(0).SetString("100000000001", 2)
-	for i := 0; i < FieldHeight; i++ {
+	for i := 0; i < FieldHeight-1; i++ {
 		curRange := uint(i * FieldWidth)
 		lineMask := big.NewInt(0).Lsh(fullLine, curRange)
 		lineIsFilled := big.NewInt(0).And(lineMask, gameField.Val).Cmp(lineMask) == 0
@@ -60,7 +42,8 @@ func (gameField *Field) Clean() {
 			// add empy line to end of field
 			restField.Lsh(restField, FieldWidth)
 			restField.Or(restField, emptyLine)
-			// TODO: score += награда за соженную линию
+			*gameField.Score += (*gameField.CleanCount/10 + 2) * 10
+			*gameField.CleanCount += 1
 		} else {
 			// add current line to start of field
 			lineMask.And(lineMask, gameField.Val)
@@ -90,10 +73,8 @@ func (gameField *Field) Clean() {
 			"000000000000"+
 			"000000000000"+
 			"000000000000"+
-			"000000000000"+
 			"000000000000", 2)
 	gameField.Val.Or(gameField.Val, restField)
-	gameField.Val.Rsh(gameField.Val, FieldWidth)
 }
 
 func (gameField *Field) Intersects(pieceVal *big.Int) bool {
@@ -111,5 +92,7 @@ func PrintField(field *Field) {
 	for i := 20; i >= 0; i-- {
 		fmt.Println(s[i*12 : i*12+12])
 	}
+	fmt.Println()
+	fmt.Println("Score: ", *field.Score, " | Speed: ", *field.CleanCount/10)
 	fmt.Println()
 }

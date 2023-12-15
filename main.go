@@ -3,6 +3,7 @@ package main
 import (
 	"github.com/mattn/go-tty"
 	"log"
+	"math/big"
 	"math/rand"
 	"sync"
 	"tetris/field"
@@ -10,7 +11,29 @@ import (
 )
 
 func main() {
-	extField := field.MakeField()
+	fieldVal, _ := big.NewInt(0).SetString(
+		"111111111111"+
+			"100000000001"+
+			"100000000001"+
+			"100000000001"+
+			"100000000001"+
+			"100000000001"+
+			"100000000001"+
+			"100000000001"+
+			"100000000001"+
+			"100000000001"+
+			"100000000001"+
+			"100000000001"+
+			"100000000001"+
+			"100000000001"+
+			"100000000001"+
+			"100000000001"+
+			"100000000001"+
+			"100000000001"+
+			"100000000001"+
+			"100000000001"+
+			"100000000001", 2)
+	extField := field.MakeField(fieldVal)
 
 	keyboardInputChannel := make(chan rune)
 	// input
@@ -39,8 +62,8 @@ func main() {
 			if !piece.MoveDown() {
 				gameField.Val.Or(gameField.Val, piece.GetVal())
 				piece = SelectNextPiece(gameField)
+				gameField.Clean()
 			}
-			gameField.Clean()
 		}
 	}(&extField, keyboardInputChannel)
 	var wg sync.WaitGroup
@@ -52,7 +75,7 @@ func inputControl(
 	keyboardInputChannel chan rune,
 	gameField *field.Field,
 ) {
-	timeout := time.After(time.Second / 8)
+	timeout := time.After(time.Second / time.Duration(*gameField.CleanCount/10+2))
 	for {
 		field.PrintField(gameField)
 		select {
@@ -67,11 +90,11 @@ func inputControl(
 			case 115:
 				// s
 				gameField.CurrentPiece.MoveDown()
-			case 101:
-				// e
-				gameField.CurrentPiece.Rotate(field.Left)
 			case 113:
 				// q
+				gameField.CurrentPiece.Rotate(field.Left)
+			case 101:
+				// e
 				gameField.CurrentPiece.Rotate(field.Right)
 			}
 		case <-timeout:
@@ -80,7 +103,7 @@ func inputControl(
 	}
 }
 
-func SelectNextPiece(gameField *field.Field) field.Piece {
+func SelectNextPiece(gameField *field.Field) *field.Piece {
 	pieceTypeRnd := rand.Intn(5)
 	// TODO: square type
 	var pieceType field.PieceType
@@ -97,5 +120,5 @@ func SelectNextPiece(gameField *field.Field) field.Piece {
 	}
 	piece := field.MakePiece(gameField, pieceType)
 	gameField.CurrentPiece = &piece
-	return piece
+	return &piece
 }
