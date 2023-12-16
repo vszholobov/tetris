@@ -3,10 +3,13 @@ package field
 import (
 	"fmt"
 	"math/big"
+	"strconv"
+	"strings"
 )
 
 const FieldWidth = 12
 const FieldHeight = 21
+const clearBoardANSII = "\033[22A"
 
 type Field struct {
 	Val          *big.Int
@@ -42,7 +45,7 @@ func (gameField *Field) Clean() {
 			// add empy line to end of field
 			restField.Lsh(restField, FieldWidth)
 			restField.Or(restField, emptyLine)
-			*gameField.Score += (*gameField.CleanCount/10 + 2) * 10
+			*gameField.Score += (*gameField.CleanCount/2 + 2) * 10
 			*gameField.CleanCount += 1
 		} else {
 			// add current line to start of field
@@ -88,12 +91,15 @@ func CopyBigInt(val *big.Int) *big.Int {
 }
 
 func PrintField(field *Field) {
-	CallClear()
-	s := field.String()
+	result := ""
+	fieldStr := field.String()
 	for i := 20; i >= 0; i-- {
-		fmt.Println(s[i*12 : i*12+12])
+		line := fieldStr[i*12 : i*12+12]
+		line = strings.ReplaceAll(line, "1", " Ж ")
+		line = strings.ReplaceAll(line, "0", "   ")
+		result += line + "\n"
 	}
-	fmt.Println()
-	fmt.Println("Score: ", *field.Score, " | Speed: ", *field.CleanCount/10)
-	fmt.Println()
+	result += "Score: " + strconv.Itoa(*field.Score) + " | Speed: " + strconv.Itoa(*field.CleanCount/2)
+	//CallClear()
+	fmt.Println(clearBoardANSII + result)
 }

@@ -11,7 +11,23 @@ import (
 )
 
 func main() {
+	//fmt.Println("012345678910")
+	//fmt.Println("012345678910")
+	//fmt.Println("012345678910")
+	//fmt.Printf("\033[20D\r%s", "ABC")
+	//fmt.Printf("\033[1A\r%s", "ABC")
+	//fmt.Printf("\033[2A[3C%s", "ABC")
+	//fmt.Println("DDD")
+	//for i := 10; i >= 0; i-- {
+	//	//fmt.Printf("\033[2K\r%d", i)
+	//	//fmt.Printf("\033[2K\r%d\n", i)
+	//	//fmt.Printf("\033[2K\r%d", 999)
+	//	fmt.Printf("\\033[10D\r%d", 999)
+	//	time.Sleep(1 * time.Second)
+	//}
+	//fmt.Println()
 	field.InitClear()
+	field.CallClear()
 	fieldVal, _ := big.NewInt(0).SetString(
 		"111111111111"+
 			"100000000001"+
@@ -76,7 +92,7 @@ func inputControl(
 	keyboardInputChannel chan rune,
 	gameField *field.Field,
 ) {
-	timeout := time.After(time.Second / time.Duration(*gameField.CleanCount/10+2))
+	timeout := time.After(time.Second / time.Duration(*gameField.CleanCount/2+2))
 	for {
 		field.PrintField(gameField)
 		select {
@@ -105,20 +121,21 @@ func inputControl(
 }
 
 func SelectNextPiece(gameField *field.Field) *field.Piece {
-	pieceTypeRnd := rand.Intn(5)
+	pieceTypeRnd := rand.Intn(1)
 	// TODO: square type
 	var pieceType field.PieceType
 	if pieceTypeRnd == 0 {
 		pieceType = field.IShape
-	} else if pieceTypeRnd == 1 {
-		pieceType = field.LShape
-	} else if pieceTypeRnd == 2 {
-		pieceType = field.TShape
-	} else if pieceTypeRnd == 3 {
-		pieceType = field.ZigZagRight
-	} else if pieceTypeRnd == 4 {
-		pieceType = field.ZigZagLeft
 	}
+	//} else if pieceTypeRnd == 1 {
+	//	pieceType = field.LShape
+	//} else if pieceTypeRnd == 2 {
+	//	pieceType = field.TShape
+	//} else if pieceTypeRnd == 3 {
+	//	pieceType = field.ZigZagRight
+	//} else if pieceTypeRnd == 4 {
+	//	pieceType = field.ZigZagLeft
+	//}
 	piece := field.MakePiece(gameField, pieceType)
 	gameField.CurrentPiece = &piece
 	return &piece
