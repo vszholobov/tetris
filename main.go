@@ -4,20 +4,30 @@ import (
 	"fmt"
 	"github.com/mattn/go-tty"
 	"log"
+	"os"
+	"os/signal"
 	"sync"
+	"syscall"
 	"tetris/field"
 	"time"
 )
 
+const showCursorASCII = "\033[?25h"
+const hideCursorASCII = "\033[?25l"
+
 func main() {
+	var wg sync.WaitGroup
+	wg.Add(1)
+
+	hideCursor()
+	defer showCursor()
 	field.InitClear()
 	field.CallClear()
 	extField := field.MakeDefaultField()
 
-	var wg sync.WaitGroup
-	wg.Add(1)
 	keyboardSendChannel := make(chan rune)
 	keyboardChannel := initInputChannel()
+	handleSigtermExit(keyboardChannel)
 	defer keyboardChannel.Close()
 	// input
 	go func(keyboardChannel *tty.TTY, keyboardSendChannel chan<- rune) {
@@ -92,4 +102,23 @@ func inputControl(
 			return
 		}
 	}
+}
+
+func hideCursor() {
+	fmt.Print(hideCursorASCII)
+}
+
+func showCursor() {
+	fmt.Print(showCursorASCII)
+}
+
+func handleSigtermExit(keyboardChannel *tty.TTY) {
+	c := make(chan os.Signal, 1)
+	signal.Notify(c, os.Interrupt, syscall.SIGTERM)
+	go func() {
+		<-c
+		showCursor()
+		keyboardChannel.Close()
+		os.Exit(1)
+	}()
 }

@@ -165,8 +165,9 @@ func printNextPiece(nextPiece *Piece) {
 	//pieceVal := nextPiece.GetVal()
 
 	fmt.Print(moveToTopASCII + moveRightASCII + " ##############")
+	fmt.Printf(moveDownOneLineASCII + moveRightASCII + " #            #")
 	pieceLines := RepresentationByType[nextPiece.pieceType]
-	for i := 0; i < 4; i++ {
+	for i := 0; i < 2; i++ {
 		curLine := "            "
 		if i < len(pieceLines) {
 			curLine = pieceLines[i]
@@ -179,6 +180,7 @@ func printNextPiece(nextPiece *Piece) {
 		//line = strings.ReplaceAll(line, "0", "")
 		//fmt.Print(moveDownOneLineASCII + moveRightASCII + " #          #")
 	}
+	fmt.Printf(moveDownOneLineASCII + moveRightASCII + " #            #")
 	fmt.Print(moveDownOneLineASCII + moveRightASCII + " ##############")
 	fmt.Print(moveDownAllLinesASCII)
 
