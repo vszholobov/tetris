@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"github.com/mattn/go-tty"
 	"log"
-	"math/rand"
 	"sync"
 	"tetris/field"
 	"time"
@@ -33,13 +32,14 @@ func main() {
 	}(keyboardChannel, keyboardSendChannel)
 	// game
 	go func(gameField *field.Field, keyboardInputChannel chan rune, wg *sync.WaitGroup) {
-		piece := SelectNextPiece(gameField)
+		//gameField.CurrentPiece = SelectRandomPiece(gameField)
+		//nextPiece := SelectRandomPiece(gameField)
 		for {
 			inputControl(keyboardInputChannel, gameField)
 
-			if !piece.MoveDown() {
-				gameField.Val.Or(gameField.Val, piece.GetVal())
-				piece = SelectNextPiece(gameField)
+			if !gameField.CurrentPiece.MoveDown() {
+				gameField.Val.Or(gameField.Val, gameField.CurrentPiece.GetVal())
+				gameField.SelectNextPiece()
 				if !gameField.CurrentPiece.CanMoveDown() {
 					field.CallClear()
 					fmt.Println("Game over. Stats:")
@@ -92,27 +92,4 @@ func inputControl(
 			return
 		}
 	}
-}
-
-func SelectNextPiece(gameField *field.Field) *field.Piece {
-	pieceTypeRnd := rand.Intn(7)
-	var pieceType field.PieceType
-	if pieceTypeRnd == 0 {
-		pieceType = field.IShape
-	} else if pieceTypeRnd == 1 {
-		pieceType = field.RightLShape
-	} else if pieceTypeRnd == 2 {
-		pieceType = field.TShape
-	} else if pieceTypeRnd == 3 {
-		pieceType = field.ZigZagRight
-	} else if pieceTypeRnd == 4 {
-		pieceType = field.ZigZagLeft
-	} else if pieceTypeRnd == 5 {
-		pieceType = field.SquareShape
-	} else if pieceTypeRnd == 6 {
-		pieceType = field.LeftLShape
-	}
-	piece := field.MakePiece(gameField, pieceType)
-	gameField.CurrentPiece = &piece
-	return &piece
 }
