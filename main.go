@@ -18,10 +18,10 @@ const hideCursorASCII = "\033[?25l"
 func main() {
 	var wg sync.WaitGroup
 	wg.Add(1)
-
-	hideCursor()
 	field.InitClear()
 	field.CallClear()
+	hideCursor()
+
 	extField := field.MakeDefaultField()
 
 	keyboardSendChannel := make(chan rune)
