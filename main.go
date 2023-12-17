@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"github.com/mattn/go-tty"
 	"log"
 	"math/rand"
@@ -14,26 +15,24 @@ func main() {
 	field.CallClear()
 	extField := field.MakeDefaultField()
 
-	keyboardInputChannel := make(chan rune)
+	var wg sync.WaitGroup
+	wg.Add(1)
+	keyboardSendChannel := make(chan rune)
+	keyboardChannel := initInputChannel()
+	defer keyboardChannel.Close()
 	// input
-	go func(keyboardInputChannel chan<- rune) {
-		keyPressedChannel, err := tty.Open()
-		if err != nil {
-			log.Fatal(err)
-		}
-		defer keyPressedChannel.Close()
-
+	go func(keyboardChannel *tty.TTY, keyboardSendChannel chan<- rune) {
 		for {
-			r, err := keyPressedChannel.ReadRune()
+			r, err := keyboardChannel.ReadRune()
 			if err != nil {
 				log.Fatal(err)
 			}
 			//fmt.Println("Key press => " + string(r))
-			keyboardInputChannel <- r
+			keyboardSendChannel <- r
 		}
-	}(keyboardInputChannel)
+	}(keyboardChannel, keyboardSendChannel)
 	// game
-	go func(gameField *field.Field, keyboardInputChannel chan rune) {
+	go func(gameField *field.Field, keyboardInputChannel chan rune, wg *sync.WaitGroup) {
 		piece := SelectNextPiece(gameField)
 		for {
 			inputControl(keyboardInputChannel, gameField)
@@ -41,20 +40,33 @@ func main() {
 			if !piece.MoveDown() {
 				gameField.Val.Or(gameField.Val, piece.GetVal())
 				piece = SelectNextPiece(gameField)
+				if !gameField.CurrentPiece.CanMoveDown() {
+					field.CallClear()
+					fmt.Println("Game over. Stats:")
+					fmt.Printf("Score: %d | Speed: %d | Lines Cleand: %d\n", *gameField.Score, gameField.GetSpeed(), *gameField.CleanCount)
+					wg.Done()
+					break
+				}
 				gameField.Clean()
 			}
 		}
-	}(&extField, keyboardInputChannel)
-	var wg sync.WaitGroup
-	wg.Add(1)
+	}(&extField, keyboardSendChannel, &wg)
 	wg.Wait()
+}
+
+func initInputChannel() *tty.TTY {
+	keyPressedChannel, err := tty.Open()
+	if err != nil {
+		log.Fatal(err)
+	}
+	return keyPressedChannel
 }
 
 func inputControl(
 	keyboardInputChannel chan rune,
 	gameField *field.Field,
 ) {
-	timeout := time.After(time.Second / time.Duration(*gameField.CleanCount/2+2))
+	timeout := time.After(time.Second / 4 / time.Duration(gameField.GetSpeed()))
 	for {
 		field.PrintField(gameField)
 		select {

@@ -46,8 +46,8 @@ func MakeDefaultField() Field {
 
 func MakeField(fieldVal *big.Int) Field {
 	score := 0
-	speed := 10
-	return Field{Val: fieldVal, Score: &score, CleanCount: &speed}
+	cleanCount := 0
+	return Field{Val: fieldVal, Score: &score, CleanCount: &cleanCount}
 }
 
 func (gameField *Field) String() string {
@@ -62,6 +62,7 @@ func (gameField *Field) Clean() {
 
 	fullLine, _ := big.NewInt(0).SetString("111111111111", 2)
 	emptyLine, _ := big.NewInt(0).SetString("100000000001", 2)
+	currentCleanCount := 0
 	for i := 0; i < FieldHeight-1; i++ {
 		curRange := uint(i * FieldWidth)
 		lineMask := big.NewInt(0).Lsh(fullLine, curRange)
@@ -71,14 +72,15 @@ func (gameField *Field) Clean() {
 			// add empy line to end of field
 			restField.Lsh(restField, FieldWidth)
 			restField.Or(restField, emptyLine)
-			*gameField.Score += (*gameField.CleanCount/2 + 2) * 10
-			*gameField.CleanCount += 1
+			currentCleanCount += 1
 		} else {
 			// add current line to start of field
 			lineMask.And(lineMask, gameField.Val)
 			restField.Or(lineMask, restField)
 		}
 	}
+	*gameField.CleanCount += currentCleanCount
+	*gameField.Score += currentCleanCount * gameField.GetSpeed() * 10 / (5 - currentCleanCount)
 	// 22 lines. One redundant line for correct or concatenation.
 	// So shift to the right by the length of the field after concatenation to remove redundant empty line
 	gameField.Val.SetString(
@@ -125,7 +127,10 @@ func PrintField(field *Field) {
 		line = strings.ReplaceAll(line, "0", "   ")
 		result += line + "\n"
 	}
-	result += "Score: " + strconv.Itoa(*field.Score) + " | Speed: " + strconv.Itoa(*field.CleanCount/2)
-	//CallClear()
+	result += "Score: " + strconv.Itoa(*field.Score) + " | Speed: " + strconv.Itoa(field.GetSpeed()) + " | Cleaned: " + strconv.Itoa(*field.CleanCount)
 	fmt.Println(clearBoardANSII + result)
+}
+
+func (gameField *Field) GetSpeed() int {
+	return *gameField.CleanCount/4 + 1
 }

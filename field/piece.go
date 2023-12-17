@@ -187,9 +187,7 @@ func (piece *Piece) MoveRight() bool {
 }
 
 func (piece *Piece) MoveDown() bool {
-	newPieceVal := big.NewInt(0).Set(piece.GetVal())
-	newPieceVal.Lsh(newPieceVal, FieldWidth)
-	if piece.field.Intersects(newPieceVal) {
+	if !piece.CanMoveDown() {
 		return false
 	}
 	for i := range piece.rotations {
@@ -197,4 +195,9 @@ func (piece *Piece) MoveDown() bool {
 		piece.rotations[i] = newRotation.Lsh(newRotation, FieldWidth)
 	}
 	return true
+}
+
+func (piece *Piece) CanMoveDown() bool {
+	movedDownPiece := big.NewInt(0).Lsh(piece.GetVal(), FieldWidth)
+	return !piece.field.Intersects(movedDownPiece)
 }
