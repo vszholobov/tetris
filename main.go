@@ -20,15 +20,15 @@ func main() {
 	wg.Add(1)
 
 	hideCursor()
-	defer showCursor()
 	field.InitClear()
 	field.CallClear()
 	extField := field.MakeDefaultField()
 
 	keyboardSendChannel := make(chan rune)
 	keyboardChannel := initInputChannel()
+	defer onExit(keyboardChannel)
 	handleSigtermExit(keyboardChannel)
-	defer keyboardChannel.Close()
+
 	// input
 	go func(keyboardChannel *tty.TTY, keyboardSendChannel chan<- rune) {
 		for {
@@ -104,6 +104,12 @@ func inputControl(
 	}
 }
 
+// onExit Closes keyboard input stream and makes cursor visible back
+func onExit(keyboardChannel *tty.TTY) {
+	showCursor()
+	keyboardChannel.Close()
+}
+
 func hideCursor() {
 	fmt.Print(hideCursorASCII)
 }
@@ -117,8 +123,7 @@ func handleSigtermExit(keyboardChannel *tty.TTY) {
 	signal.Notify(c, os.Interrupt, syscall.SIGTERM)
 	go func() {
 		<-c
-		showCursor()
-		keyboardChannel.Close()
+		onExit(keyboardChannel)
 		os.Exit(1)
 	}()
 }
