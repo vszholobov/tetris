@@ -13,6 +13,7 @@ const (
 	ZigZagRight PieceType = 2
 	LShape      PieceType = 3
 	IShape      PieceType = 4
+	SquareShape PieceType = 5
 )
 
 var rotationsCntByType = map[PieceType]int{
@@ -21,7 +22,12 @@ var rotationsCntByType = map[PieceType]int{
 	ZigZagRight: 2,
 	LShape:      4,
 	IShape:      2,
+	SquareShape: 1,
 }
+
+// []
+//000001100000
+//000001100000 = 393312
 
 // L
 //000010000000
@@ -86,6 +92,7 @@ var rotationsByType = map[PieceType][]*big.Int{
 	ZigZagRight: {big.NewInt(393264), big.NewInt(537264192)},
 	IShape:      {big.NewInt(240), big.NewInt(4399120515136)},
 	LShape:      {big.NewInt(524512), big.NewInt(1074004160), big.NewInt(917536), big.NewInt(3221749888)},
+	SquareShape: {big.NewInt(393312)},
 }
 
 type RotationType int

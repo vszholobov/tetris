@@ -3,7 +3,6 @@ package main
 import (
 	"github.com/mattn/go-tty"
 	"log"
-	"math/big"
 	"math/rand"
 	"sync"
 	"tetris/field"
@@ -11,46 +10,9 @@ import (
 )
 
 func main() {
-	//fmt.Println("012345678910")
-	//fmt.Println("012345678910")
-	//fmt.Println("012345678910")
-	//fmt.Printf("\033[20D\r%s", "ABC")
-	//fmt.Printf("\033[1A\r%s", "ABC")
-	//fmt.Printf("\033[2A[3C%s", "ABC")
-	//fmt.Println("DDD")
-	//for i := 10; i >= 0; i-- {
-	//	//fmt.Printf("\033[2K\r%d", i)
-	//	//fmt.Printf("\033[2K\r%d\n", i)
-	//	//fmt.Printf("\033[2K\r%d", 999)
-	//	fmt.Printf("\\033[10D\r%d", 999)
-	//	time.Sleep(1 * time.Second)
-	//}
-	//fmt.Println()
 	field.InitClear()
 	field.CallClear()
-	fieldVal, _ := big.NewInt(0).SetString(
-		"111111111111"+
-			"100000000001"+
-			"100000000001"+
-			"100000000001"+
-			"100000000001"+
-			"100000000001"+
-			"100000000001"+
-			"100000000001"+
-			"100000000001"+
-			"100000000001"+
-			"100000000001"+
-			"100000000001"+
-			"100000000001"+
-			"100000000001"+
-			"100000000001"+
-			"100000000001"+
-			"100000000001"+
-			"100000000001"+
-			"100000000001"+
-			"100000000001"+
-			"100000000001", 2)
-	extField := field.MakeField(fieldVal)
+	extField := field.MakeDefaultField()
 
 	keyboardInputChannel := make(chan rune)
 	// input
@@ -121,21 +83,21 @@ func inputControl(
 }
 
 func SelectNextPiece(gameField *field.Field) *field.Piece {
-	pieceTypeRnd := rand.Intn(1)
-	// TODO: square type
+	pieceTypeRnd := rand.Intn(6)
 	var pieceType field.PieceType
 	if pieceTypeRnd == 0 {
 		pieceType = field.IShape
+	} else if pieceTypeRnd == 1 {
+		pieceType = field.LShape
+	} else if pieceTypeRnd == 2 {
+		pieceType = field.TShape
+	} else if pieceTypeRnd == 3 {
+		pieceType = field.ZigZagRight
+	} else if pieceTypeRnd == 4 {
+		pieceType = field.ZigZagLeft
+	} else if pieceTypeRnd == 5 {
+		pieceType = field.SquareShape
 	}
-	//} else if pieceTypeRnd == 1 {
-	//	pieceType = field.LShape
-	//} else if pieceTypeRnd == 2 {
-	//	pieceType = field.TShape
-	//} else if pieceTypeRnd == 3 {
-	//	pieceType = field.ZigZagRight
-	//} else if pieceTypeRnd == 4 {
-	//	pieceType = field.ZigZagLeft
-	//}
 	piece := field.MakePiece(gameField, pieceType)
 	gameField.CurrentPiece = &piece
 	return &piece
