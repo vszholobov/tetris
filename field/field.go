@@ -118,17 +118,26 @@ func CopyBigInt(val *big.Int) *big.Int {
 	return big.NewInt(0).Set(val)
 }
 
+var builder = strings.Builder{}
+
 func PrintField(field *Field) {
-	result := ""
+	builder.Reset()
+	builder.WriteString(clearBoardANSII)
 	fieldStr := field.String()
 	for i := 20; i >= 0; i-- {
 		line := fieldStr[i*12 : i*12+12]
 		line = strings.ReplaceAll(line, "1", " Ж ")
 		line = strings.ReplaceAll(line, "0", "   ")
-		result += line + "\n"
+		builder.WriteString(line)
+		builder.WriteString("\n")
 	}
-	result += "Score: " + strconv.Itoa(*field.Score) + " | Speed: " + strconv.Itoa(field.GetSpeed()) + " | Cleaned: " + strconv.Itoa(*field.CleanCount)
-	fmt.Println(clearBoardANSII + result)
+	builder.WriteString("Score: ")
+	builder.WriteString(strconv.Itoa(*field.Score))
+	builder.WriteString(" | Speed: ")
+	builder.WriteString(strconv.Itoa(field.GetSpeed()))
+	builder.WriteString(" | Cleaned: ")
+	builder.WriteString(strconv.Itoa(*field.CleanCount))
+	fmt.Println(builder.String())
 }
 
 func (gameField *Field) GetSpeed() int {

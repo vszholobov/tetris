@@ -11,16 +11,18 @@ const (
 	TShape      PieceType = 0
 	ZigZagLeft  PieceType = 1
 	ZigZagRight PieceType = 2
-	LShape      PieceType = 3
-	IShape      PieceType = 4
-	SquareShape PieceType = 5
+	RightLShape PieceType = 3
+	LeftLShape  PieceType = 4
+	IShape      PieceType = 5
+	SquareShape PieceType = 6
 )
 
 var rotationsCntByType = map[PieceType]int{
 	TShape:      4,
 	ZigZagLeft:  2,
 	ZigZagRight: 2,
-	LShape:      4,
+	RightLShape: 4,
+	LeftLShape:  4,
 	IShape:      2,
 	SquareShape: 1,
 }
@@ -28,6 +30,21 @@ var rotationsCntByType = map[PieceType]int{
 // []
 //000001100000
 //000001100000 = 393312
+
+// ⅃
+//000000100000
+//000011100000 = 131296
+
+//000001100000
+//000000100000
+//000000100000 = 1610743840
+
+//000011100000
+//000010000000 = 917632
+
+//000001000000
+//000001000000
+//000001100000 = 1074004064
 
 // L
 //000010000000
@@ -91,7 +108,8 @@ var rotationsByType = map[PieceType][]*big.Int{
 	ZigZagLeft:  {big.NewInt(196704), big.NewInt(1074135072)},
 	ZigZagRight: {big.NewInt(393264), big.NewInt(537264192)},
 	IShape:      {big.NewInt(240), big.NewInt(4399120515136)},
-	LShape:      {big.NewInt(524512), big.NewInt(1074004160), big.NewInt(917536), big.NewInt(3221749888)},
+	RightLShape: {big.NewInt(524512), big.NewInt(1074004160), big.NewInt(917536), big.NewInt(3221749888)},
+	LeftLShape:  {big.NewInt(131296), big.NewInt(1610743840), big.NewInt(917632), big.NewInt(1074004064)},
 	SquareShape: {big.NewInt(393312)},
 }
 

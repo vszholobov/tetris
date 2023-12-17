@@ -95,12 +95,12 @@ func inputControl(
 }
 
 func SelectNextPiece(gameField *field.Field) *field.Piece {
-	pieceTypeRnd := rand.Intn(6)
+	pieceTypeRnd := rand.Intn(7)
 	var pieceType field.PieceType
 	if pieceTypeRnd == 0 {
 		pieceType = field.IShape
 	} else if pieceTypeRnd == 1 {
-		pieceType = field.LShape
+		pieceType = field.RightLShape
 	} else if pieceTypeRnd == 2 {
 		pieceType = field.TShape
 	} else if pieceTypeRnd == 3 {
@@ -109,6 +109,8 @@ func SelectNextPiece(gameField *field.Field) *field.Piece {
 		pieceType = field.ZigZagLeft
 	} else if pieceTypeRnd == 5 {
 		pieceType = field.SquareShape
+	} else if pieceTypeRnd == 6 {
+		pieceType = field.LeftLShape
 	}
 	piece := field.MakePiece(gameField, pieceType)
 	gameField.CurrentPiece = &piece
